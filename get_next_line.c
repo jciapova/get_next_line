@@ -122,7 +122,7 @@ char	*new_line(char *start)
 	i = 0;
 	if (!start)
 		return (0);
-	while (start[i] != '\n')
+	while (start[i] != '\n' && start[i] != '\0')
 		i++;
 	if (start[i] == '\n')
 		i++;
@@ -130,7 +130,7 @@ char	*new_line(char *start)
 	if (!new_line)
 		return (NULL);
 	i = 0;
-	while (start[i] != '\n')
+	while (start[i] != '\n' && start[i] != '\0')
 	{
 		new_line[i] = start[i];
 		i++;
@@ -146,37 +146,41 @@ char	*new_line(char *start)
 
 char	*get_next_line(int fd)
 {
-	char			*buffer;
-	static char		*ret;
-	int			read_line;
+	char		*ret;
+	char		*temp;
+	static char	buff[BUFFER_SIZE];
+	int		read_line;
 
 	read_line = 1;
-	buffer = (char *)malloc(sizeof(char) * BUFFER_SIZE + 1);
-	if (!buffer)
+	ret = (char *)malloc(sizeof(char) * BUFFER_SIZE + 1);
+	if (!ret)
 		return (NULL);
+	ft_strlcpy(ret, buff, BUFFER_SIZE);
 	while (read_line != 0)
 	{
-		read_line = read(fd, buffer, BUFFER_SIZE);
-		buffer[read_line] = '\0';
-		ret = ft_strjoin(ret, buffer);
-		if (ft_strchr(ret, '\n'))
+		read_line = read(fd, buff, BUFFER_SIZE);
+		ret = ft_strjoin(ret, buff);
+		if (ft_strchr(buff, '\n'))
+		{
+			temp = ft_strchr(ret, '\n');
+			ft_strlcpy(buff, temp + 1, ft_strlen(temp + 1) + 1);
+			ret = new_line(ret);
 			break;
+		}
 	}
-	free(buffer);
-	buffer = new_line(ret);
-	return (buffer);
+	if (read_line == -1)
+		return (NULL);
+	return (ret);
 }
 
 int main()
 {
-    int     fd, i=0;
-    char    *line;
-    fd = open("test.txt",O_RDONLY);
-    while ((line = get_next_line(fd)))
-    {
-	printf("%s", line);
-    	i++;
-    }
-    printf("%s", get_next_line(fd));
-    return (0);
+	int     fd, i=0;
+	char    *line;
+	fd = open("test.txt",O_RDONLY);
+	printf("%s", get_next_line(fd));
+	printf("%s", get_next_line(fd));
+	printf("%s", get_next_line(fd));
+	printf("%s", get_next_line(fd));
+	return (0);
 }
