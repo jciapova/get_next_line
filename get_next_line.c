@@ -121,7 +121,7 @@ char	*new_line(char *start)
 
 	i = 0;
 	if (!start)
-		return (0);
+		return (NULL);
 	while (start[i] != '\n' && start[i] != '\0')
 		i++;
 	if (start[i] == '\n')
@@ -136,41 +136,43 @@ char	*new_line(char *start)
 		i++;
 	}
 	if (start[i] == '\n')
-	{
-		new_line[i] = '\n';
-		i++;
-	}
+		new_line[i++] = '\n';
 	new_line[i] = '\0';
 	return (new_line);
 }
 
 char	*get_next_line(int fd)
 {
-	char		*ret;
+	char		*line;
 	char		*temp;
 	static char	buff[BUFFER_SIZE];
 	int		read_line;
 
 	read_line = 1;
-	ret = (char *)malloc(sizeof(char) * BUFFER_SIZE + 1);
-	if (!ret)
+	line = (char *)malloc(sizeof(char) * BUFFER_SIZE + 1);
+	if (!line)
 		return (NULL);
-	ft_strlcpy(ret, buff, BUFFER_SIZE);
-	while (read_line != 0)
+	ft_strlcpy(line, buff, BUFFER_SIZE);
+	while (read_line > 0)
 	{
 		read_line = read(fd, buff, BUFFER_SIZE);
-		ret = ft_strjoin(ret, buff);
+		if (read_line == 0)
+			break;
+		line = ft_strjoin(line, buff);
 		if (ft_strchr(buff, '\n'))
 		{
-			temp = ft_strchr(ret, '\n');
+			temp = ft_strchr(line, '\n');
 			ft_strlcpy(buff, temp + 1, ft_strlen(temp + 1) + 1);
-			ret = new_line(ret);
+			line = new_line(line);
 			break;
 		}
 	}
 	if (read_line == -1)
+	{	
+		free (line);
 		return (NULL);
-	return (ret);
+	}
+	return (line);
 }
 
 int main()
