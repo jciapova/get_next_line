@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   get_next_line.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jciapova <jciapova@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ubuntu <ubuntu@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/07 19:48:35 by jciapova          #+#    #+#             */
-/*   Updated: 2023/03/22 19:56:40 by jciapova         ###   ########.fr       */
+/*   Updated: 2023/04/15 12:05:48 by ubuntu           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,103 +16,6 @@
 #include <stddef.h>
 #include <fcntl.h>
 #include <string.h>
-
-size_t	ft_strlcpy(char *dst, const char *src, size_t size)
-{
-	size_t	i;
-	int		len;
-
-	i = 0;
-	len = 0;
-	while (src[len] != '\0')
-		len++;
-	if (size == 0)
-		return (len);
-	while (src[i] != '\0' && i < size - 1)
-	{
-		dst[i] = src[i];
-		i++;
-	}
-	dst[i] = '\0';
-	return (len);
-}
-
-int	ft_strlen(char *str)
-{
-	int	i;
-
-	i = 0;
-	if (!str)
-		return (0);
-	while (str[i])
-		i++;
-	return (i);
-}
-
-char	*ft_strjoin(char *s1, char *s2)
-{
-	int		i;
-	int		j;
-	int		k;
-	int		len;
-	char	*str;
-
-	i = 0;
-	j = 0;
-	k = 0;
-	len = ft_strlen(s1) + ft_strlen(s2);
-	str = (char *)malloc(sizeof(char) * len + 1);
-	if (str == NULL)
-		return (NULL);
-	if (!s1 || !s2)
-		return (0);
-	while (s1[i])
-		str[k++] = s1[i++];
-	while (s2[j])
-		str[k++] = s2[j++];
-	str[k] = '\0';
-	return (str);
-}
-
-char	*ft_strchr(char *s, int c)
-{
-	int	i;
-
-	i = 0;
-	if (!s)
-		return (NULL);
-	while (s[i])
-	{
-		if (s[i] == (char)c)
-			return ((char *)(s + i));
-		i++;
-	}
-	if (c == '\0')
-		return ((char *)(s + i));
-	return (NULL);
-}
-
-char	*ft_substr(char const *s, unsigned int start, int len)
-{
-	int	i;
-	char	*sub;
-
-	i = strlen(s);
-	if (len > i)
-		len = i - start;
-	if (start > i)
-	{
-		len = 0;
-		start = i;
-	}
-	if (i - start < len)
-		len = i - start;
-	sub = (char *)malloc(sizeof(char) * (len + 1));
-	if (s == NULL)
-		return (NULL);
-	ft_strlcpy(sub, s + start, len + 1);
-	return (sub);
-}
 
 char	*new_line(char *start)
 {
@@ -138,6 +41,7 @@ char	*new_line(char *start)
 	if (start[i] == '\n')
 		new_line[i++] = '\n';
 	new_line[i] = '\0';
+	free(start);
 	return (new_line);
 }
 
@@ -145,7 +49,7 @@ char	*get_next_line(int fd)
 {
 	char		*line;
 	char		*temp;
-	static char	buff[BUFFER_SIZE];
+	static char	buff[BUFFER_SIZE + 1];
 	int		read_line;
 
 	read_line = 1;
@@ -156,9 +60,12 @@ char	*get_next_line(int fd)
 	while (read_line > 0)
 	{
 		read_line = read(fd, buff, BUFFER_SIZE);
+		buff[read_line] = '\0';
 		if (read_line == 0)
 			break;
-		line = ft_strjoin(line, buff);
+		temp = line;
+		line = ft_strjoin(temp, buff);
+		free(temp);
 		if (ft_strchr(buff, '\n'))
 		{
 			temp = ft_strchr(line, '\n');
@@ -175,14 +82,14 @@ char	*get_next_line(int fd)
 	return (line);
 }
 
-int main()
-{
-	int     fd, i=0;
-	char    *line;
-	fd = open("test.txt",O_RDONLY);
-	printf("%s", get_next_line(fd));
-	printf("%s", get_next_line(fd));
-	printf("%s", get_next_line(fd));
-	printf("%s", get_next_line(fd));
-	return (0);
-}
+// int main()
+// {
+// 	int     fd, i=0;
+// 	char    *line;
+// 	fd = open("test.txt",O_RDONLY);
+// 	printf("%s", get_next_line(fd));
+// 	printf("%s", get_next_line(fd));
+// 	printf("%s", get_next_line(fd));
+// 	printf("%s", get_next_line(fd));
+// 	return (0);
+// }
