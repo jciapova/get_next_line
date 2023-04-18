@@ -6,7 +6,7 @@
 /*   By: ubuntu <ubuntu@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/07 19:48:35 by jciapova          #+#    #+#             */
-/*   Updated: 2023/04/15 12:05:48 by ubuntu           ###   ########.fr       */
+/*   Updated: 2023/04/16 21:37:30 by ubuntu           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,20 +69,14 @@ char	*get_next_line(int fd)
 		temp = line;
 		line = ft_strjoin(temp, buff);
 		free(temp);
-	}
-	temp = ft_strchr(line, '\n');
-	if (temp == NULL)
-	{
-		ft_bzero(buff, BUFFER_SIZE + 1);
-		if (ft_strlen(line) == 0)
+		if (ft_strchr(buff, '\n'))
 		{
-			free(line);
-			return (NULL);
+			temp = ft_strchr(line, '\n');
+			ft_strlcpy(buff, temp + 1, ft_strlen(temp + 1) + 1);
+			line = new_line(line);
+			break;
 		}
-		return (line);
 	}
-	ft_strlcpy(buff, temp + 1, ft_strlen(temp + 1) + 1);
-	line = new_line(line);
 	if (read_line == -1)
 	{	
 		free (line);
@@ -96,18 +90,6 @@ char	*get_next_line(int fd)
 // 	int     fd, i=0;
 // 	char    *line;
 // 	fd = open("test.txt",O_RDONLY);
-// 	printf("%s", get_next_line(fd));
-// 	printf("%s", get_next_line(fd));
-// 	printf("%s", get_next_line(fd));
-// 	printf("%s", get_next_line(fd));
-// 	printf("%s", get_next_line(fd));
-// 	printf("%s", get_next_line(fd));
-// 	printf("%s", get_next_line(fd));
-// 	printf("%s", get_next_line(fd));
-// 	printf("%s", get_next_line(fd));
-// 	printf("%s", get_next_line(fd));
-// 	printf("%s", get_next_line(fd));
-// 	printf("%s", get_next_line(fd));
 // 	printf("%s", get_next_line(fd));
 // 	printf("%s", get_next_line(fd));
 // 	printf("%s", get_next_line(fd));
