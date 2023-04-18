@@ -21,10 +21,11 @@
 #  define BUFFER_SIZE 4
 # endif
 
-char		*get_next_line(int fd);
+char	*get_next_line(int fd);
 size_t	ft_strlcpy(char *dst, const char *src, size_t size);
-int	ft_strlen(char *str);
+int		ft_strlen(char *str);
 char	*ft_strjoin(char *s1, char *s2);
 char	*ft_strchr(char *s, int c);
+void	*ft_bzero(void *s, size_t n);
 
 #endif

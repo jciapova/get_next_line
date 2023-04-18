@@ -19,7 +19,7 @@
 
 char	*new_line(char *start)
 {
-	int	i;
+	int		i;
 	char	*new_line;
 
 	i = 0;
@@ -50,30 +50,39 @@ char	*get_next_line(int fd)
 	char		*line;
 	char		*temp;
 	static char	buff[BUFFER_SIZE + 1];
-	int		read_line;
+	int			read_line;
 
+	if (fd < 0 || BUFFER_SIZE <= 0 || read(fd, 0, 0) < 0)
+		return (NULL);
 	read_line = 1;
 	line = (char *)malloc(sizeof(char) * BUFFER_SIZE + 1);
 	if (!line)
 		return (NULL);
 	ft_strlcpy(line, buff, BUFFER_SIZE);
-	while (read_line > 0)
+	while (buff[0] == 0 || !(ft_strchr(buff, '\n')))
 	{
 		read_line = read(fd, buff, BUFFER_SIZE);
-		buff[read_line] = '\0';
+		if (read_line != 0)
+			buff[read_line] = '\0';
 		if (read_line == 0)
-			break;
+			break ;
 		temp = line;
 		line = ft_strjoin(temp, buff);
 		free(temp);
-		if (ft_strchr(buff, '\n'))
-		{
-			temp = ft_strchr(line, '\n');
-			ft_strlcpy(buff, temp + 1, ft_strlen(temp + 1) + 1);
-			line = new_line(line);
-			break;
-		}
 	}
+	temp = ft_strchr(line, '\n');
+	if (temp == NULL)
+	{
+		ft_bzero(buff, BUFFER_SIZE + 1);
+		if (ft_strlen(line) == 0)
+		{
+			free(line);
+			return (NULL);
+		}
+		return (line);
+	}
+	ft_strlcpy(buff, temp + 1, ft_strlen(temp + 1) + 1);
+	line = new_line(line);
 	if (read_line == -1)
 	{	
 		free (line);
@@ -87,6 +96,18 @@ char	*get_next_line(int fd)
 // 	int     fd, i=0;
 // 	char    *line;
 // 	fd = open("test.txt",O_RDONLY);
+// 	printf("%s", get_next_line(fd));
+// 	printf("%s", get_next_line(fd));
+// 	printf("%s", get_next_line(fd));
+// 	printf("%s", get_next_line(fd));
+// 	printf("%s", get_next_line(fd));
+// 	printf("%s", get_next_line(fd));
+// 	printf("%s", get_next_line(fd));
+// 	printf("%s", get_next_line(fd));
+// 	printf("%s", get_next_line(fd));
+// 	printf("%s", get_next_line(fd));
+// 	printf("%s", get_next_line(fd));
+// 	printf("%s", get_next_line(fd));
 // 	printf("%s", get_next_line(fd));
 // 	printf("%s", get_next_line(fd));
 // 	printf("%s", get_next_line(fd));
