@@ -6,7 +6,7 @@
 /*   By: ubuntu <ubuntu@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/07 19:48:35 by jciapova          #+#    #+#             */
-/*   Updated: 2023/04/15 12:05:48 by ubuntu           ###   ########.fr       */
+/*   Updated: 2023/04/23 19:29:36 by ubuntu           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,6 +45,30 @@ char	*new_line(char *start)
 	return (new_line);
 }
 
+char	*gnl_continued(char *line, char *buff, int read_line)
+{
+	char	*temp;
+	temp = ft_strchr(line, '\n');
+	if (temp == NULL)
+	{
+		ft_bzero(buff, BUFFER_SIZE + 1);
+		if (ft_strlen(line) == 0)
+		{
+			free(line);
+			return (NULL);
+		}
+		return (line);
+	}
+	ft_strlcpy(buff, temp + 1, ft_strlen(temp + 1) + 1);
+	line = new_line(line);
+	if (read_line == -1)
+	{	
+		free (line);
+		return (NULL);
+	}
+	return (line);
+}
+
 char	*get_next_line(int fd)
 {
 	char		*line;
@@ -70,25 +94,7 @@ char	*get_next_line(int fd)
 		line = ft_strjoin(temp, buff);
 		free(temp);
 	}
-	temp = ft_strchr(line, '\n');
-	if (temp == NULL)
-	{
-		ft_bzero(buff, BUFFER_SIZE + 1);
-		if (ft_strlen(line) == 0)
-		{
-			free(line);
-			return (NULL);
-		}
-		return (line);
-	}
-	ft_strlcpy(buff, temp + 1, ft_strlen(temp + 1) + 1);
-	line = new_line(line);
-	if (read_line == -1)
-	{	
-		free (line);
-		return (NULL);
-	}
-	return (line);
+	return (gnl_continued(line, buff, read_line));
 }
 
 // int main()
